@@ -1,6 +1,6 @@
 {
   "name": "elastalert_api_client",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "description": "Client for the bitsensor/elastalert_api",
   "main": "dist/index.js",
   "author": "Joey Andres <joey@jsonar.com>",
