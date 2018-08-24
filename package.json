@@ -1,0 +1,28 @@
+{
+  "name": "elastalert_api_client",
+  "version": "0.0.7",
+  "description": "Client for the bitsensor/elastalert_api",
+  "main": "dist/index.js",
+  "author": "Joey Andres <joey@jsonar.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "./node_modules/.bin/babel src --out-dir dist"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0-rc.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-rc.2",
+    "@babel/core": "^7.0.0-rc.2",
+    "@babel/preset-env": "^7.0.0-rc.2",
+    "jshint": "^2.9.6"
+  },
+  "babel": {
+    "presets": [
+      "@babel/env"
+    ]
+  }
+}
