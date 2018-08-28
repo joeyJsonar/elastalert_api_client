@@ -47,6 +47,28 @@ export class ElastAlertAPIClient {
     }
 
     /**
+     * Stops the current ElastAlert process.
+     */
+    async stop() {
+        return await rp.get({ url: url.resolve(this.getUrl(), '/status/control/stop'), json: true });
+    }
+
+    /**
+     * Starts the current ElastAlert process.
+     */
+    async start() {
+        return await rp.get({ url: url.resolve(this.getUrl(), '/status/control/start'), json: true });
+    }
+
+    /**
+     * Restarts the current ElastAlert process.
+     */
+    async restart() {
+        await this.stop();
+        await this.start();
+    }
+
+    /**
      * @return A list of directories and rules that exist in the rulesPath (from the config) and 
      *   are being run by the ElastAlert process.
      */

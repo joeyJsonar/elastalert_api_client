@@ -21,9 +21,19 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+/**
+ * Encapsulates the http client that interacts with bitsensor's
+ * elastalert_api.
+ */
 var ElastAlertAPIClient =
 /*#__PURE__*/
 function () {
+  /**
+   * Creates the elastalert API client.
+   * @param {Object} opts ElastAlert API information.
+   * @param {string} opts.host The host ElastAlert API is listening to.
+   * @param {number} opts.port The port ElastAlert API is listening to.
+   */
   function ElastAlertAPIClient() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -37,12 +47,20 @@ function () {
       delete: this._rule_delete.bind(this)
     };
   }
+  /**
+   * @returns URL of the ElastAlert API.
+   */
+
 
   _createClass(ElastAlertAPIClient, [{
     key: "getUrl",
     value: function getUrl() {
       return "".concat(this.host, ":").concat(this.port);
     }
+    /**
+     * @returns The current version running
+     */
+
   }, {
     key: "info",
     value: function () {
@@ -74,6 +92,11 @@ function () {
         return _info.apply(this, arguments);
       };
     }()
+    /**
+     * @returns either 'SETUP', 'READY', 'ERROR', 'STARTING', 'CLOSING', 'FIRST_RUN' or 'IDLE' 
+     *   depending on the current ElastAlert process status.
+     */
+
   }, {
     key: "status",
     value: function () {
@@ -105,10 +128,14 @@ function () {
         return _status.apply(this, arguments);
       };
     }()
+    /**
+     * Stops the current ElastAlert process.
+     */
+
   }, {
-    key: "rules",
+    key: "stop",
     value: function () {
-      var _rules = _asyncToGenerator(
+      var _stop = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee3() {
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
@@ -117,7 +144,7 @@ function () {
               case 0:
                 _context3.next = 2;
                 return _requestPromise.default.get({
-                  url: _url.default.resolve(this.getUrl(), '/rules'),
+                  url: _url.default.resolve(this.getUrl(), '/status/control/stop'),
                   json: true
                 });
 
@@ -132,23 +159,27 @@ function () {
         }, _callee3, this);
       }));
 
-      return function rules() {
-        return _rules.apply(this, arguments);
+      return function stop() {
+        return _stop.apply(this, arguments);
       };
     }()
+    /**
+     * Starts the current ElastAlert process.
+     */
+
   }, {
-    key: "_rule_get",
+    key: "start",
     value: function () {
-      var _rule_get2 = _asyncToGenerator(
+      var _start = _asyncToGenerator(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee4(id) {
+      regeneratorRuntime.mark(function _callee4() {
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.next = 2;
                 return _requestPromise.default.get({
-                  url: _url.default.resolve(this.getUrl(), "/rules/".concat(id)),
+                  url: _url.default.resolve(this.getUrl(), '/status/control/start'),
                   json: true
                 });
 
@@ -163,31 +194,32 @@ function () {
         }, _callee4, this);
       }));
 
-      return function _rule_get(_x) {
-        return _rule_get2.apply(this, arguments);
+      return function start() {
+        return _start.apply(this, arguments);
       };
     }()
+    /**
+     * Restarts the current ElastAlert process.
+     */
+
   }, {
-    key: "_rule_update",
+    key: "restart",
     value: function () {
-      var _rule_update2 = _asyncToGenerator(
+      var _restart = _asyncToGenerator(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee5(id, body) {
+      regeneratorRuntime.mark(function _callee5() {
         return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
                 _context5.next = 2;
-                return _requestPromise.default.post({
-                  url: _url.default.resolve(this.getUrl(), "/rules/".concat(id)),
-                  body: body,
-                  json: true
-                });
+                return this.stop();
 
               case 2:
-                return _context5.abrupt("return", _context5.sent);
+                _context5.next = 4;
+                return this.start();
 
-              case 3:
+              case 4:
               case "end":
                 return _context5.stop();
             }
@@ -195,23 +227,28 @@ function () {
         }, _callee5, this);
       }));
 
-      return function _rule_update(_x2, _x3) {
-        return _rule_update2.apply(this, arguments);
+      return function restart() {
+        return _restart.apply(this, arguments);
       };
     }()
+    /**
+     * @return A list of directories and rules that exist in the rulesPath (from the config) and 
+     *   are being run by the ElastAlert process.
+     */
+
   }, {
-    key: "_rule_delete",
+    key: "rules",
     value: function () {
-      var _rule_delete2 = _asyncToGenerator(
+      var _rules = _asyncToGenerator(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee6(id) {
+      regeneratorRuntime.mark(function _callee6() {
         return regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
                 _context6.next = 2;
-                return _requestPromise.default.del({
-                  url: _url.default.resolve(this.getUrl(), "/rules/".concat(id)),
+                return _requestPromise.default.get({
+                  url: _url.default.resolve(this.getUrl(), '/rules'),
                   json: true
                 });
 
@@ -224,6 +261,133 @@ function () {
             }
           }
         }, _callee6, this);
+      }));
+
+      return function rules() {
+        return _rules.apply(this, arguments);
+      };
+    }()
+    /**
+     * @param {string} id ID of a rule to retrieve.
+     * @return Rule object, where :id is the id of the rule returned by GET /rules, which will 
+     *   return the file contents of that rule.
+     * @function get
+     * @memberof rule
+     */
+
+  }, {
+    key: "_rule_get",
+    value: function () {
+      var _rule_get2 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee7(id) {
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                _context7.next = 2;
+                return _requestPromise.default.get({
+                  url: _url.default.resolve(this.getUrl(), "/rules/".concat(id)),
+                  json: true
+                });
+
+              case 2:
+                return _context7.abrupt("return", _context7.sent);
+
+              case 3:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this);
+      }));
+
+      return function _rule_get(_x) {
+        return _rule_get2.apply(this, arguments);
+      };
+    }()
+    /**
+     * Where :id is the id of the rule returned by GET /rules, which will 
+     * allow you to edit the rule. The body send should be:
+     * 
+     * ```javascript
+     * {
+     *   // Required - The full yaml rule config.
+     *   "yaml": "..."
+     * }
+     * ```
+     * 
+     * @param {string} id ID of a rule to update.
+     * @param {Object} body New rule body.
+     * @return {Object} Result of the rule update.
+     * @function update
+     * @memberof rule
+     */
+
+  }, {
+    key: "_rule_update",
+    value: function () {
+      var _rule_update2 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee8(id, body) {
+        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                _context8.next = 2;
+                return _requestPromise.default.post({
+                  url: _url.default.resolve(this.getUrl(), "/rules/".concat(id)),
+                  body: body,
+                  json: true
+                });
+
+              case 2:
+                return _context8.abrupt("return", _context8.sent);
+
+              case 3:
+              case "end":
+                return _context8.stop();
+            }
+          }
+        }, _callee8, this);
+      }));
+
+      return function _rule_update(_x2, _x3) {
+        return _rule_update2.apply(this, arguments);
+      };
+    }()
+    /**
+     * @param {string} id ID of the rule to delete.
+     * @return {Object} Result of the rule delete.
+     * @function delete
+     * @memberof rule
+     */
+
+  }, {
+    key: "_rule_delete",
+    value: function () {
+      var _rule_delete2 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee9(id) {
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                _context9.next = 2;
+                return _requestPromise.default.del({
+                  url: _url.default.resolve(this.getUrl(), "/rules/".concat(id)),
+                  json: true
+                });
+
+              case 2:
+                return _context9.abrupt("return", _context9.sent);
+
+              case 3:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee9, this);
       }));
 
       return function _rule_delete(_x4) {
